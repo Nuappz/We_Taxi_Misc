@@ -1,0 +1,42 @@
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <title>Node.js Long-polling Ajax test</title>
+</head>
+<body>
+ 
+</body>
+<script>
+var timestamp;
+function callNode() {
+ 
+    $.ajax({
+        url: 'http://localhost:8000',
+        dataType: "jsonp",
+        data: {"timestamp":timestamp},
+        jsonpCallback: "_testcb",
+        cache: false,
+        timeout: 35000,
+        success: function(response, code, xhr) {
+            if ('ok' == response) {
+                console.log(response);
+                callNode();
+                return false;
+            }
+ 
+            alert(response); //work with our response
+            timestamp = response.time;
+            // make new call
+            callNode();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log('error ' + textStatus + " " + errorThrown);
+        }
+    });
+}
+$(function () {
+    setTimeout(callNode, 1); //call function with setTimeout in order to avoid ugly constant browser loading 
+});
+</script>
+</html>
+ 
